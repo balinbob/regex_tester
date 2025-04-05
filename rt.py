@@ -19,13 +19,9 @@ class DoIt:
         self.window.combo.connect("changed", self.on_combo_changed)
         buffer = self.window.textview.get_buffer()
         buffer.connect("changed", self.on_textview_changed)
-
-
-
     def on_textview_changed(self, widget):
         result = ''
         self.window.result.set_text(result)
-
     def on_entry_changed(self, widget):
         result = ''
         self.window.result.set_text(result)
@@ -86,6 +82,11 @@ class DoIt:
 
     def evaluate_regex(self, function, pattern, text, repl=None):
         """Evaluate the regex function based on the selected option."""
+        try:
+            pattern = re.compile(pattern)
+        except re.error as e:
+            print(e)
+            return f"Regex error: {e}"
         if function == "match":
             result = re.match(pattern, text)
         elif function == "findall":
