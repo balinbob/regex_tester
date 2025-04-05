@@ -36,10 +36,18 @@ class MyWindow(Gtk.Window):
         self.combo.set_tooltip_text("Select the type of input")
         grid.attach(self.combo, 1, 1, 1, 1)
         grid.attach(Gtk.Label(label="Function:"), 0, 1, 1, 1)
+        self.combo_label = Gtk.Label()
+        grid.attach(self.combo_label, 1, 1, 1, 1)
+
+
+        self.pattern_label = Gtk.Label(label="Pattern:")
+        self.pattern_label.set_sensitive(True)
+        self.pattern_label.set_tooltip_text("Regex pattern to match against the text")
+        grid.attach(self.pattern_label, 0, 2, 1, 1)
 
         self.entry = Gtk.Entry()
         self.entry.set_sensitive(True)
-        grid.attach(self.entry, 1, 1, 1, 1)
+        grid.attach(self.entry, 1, 2, 1, 1)
 
 
         self.entry.set_placeholder_text("Enter regex pattern")
@@ -51,13 +59,13 @@ class MyWindow(Gtk.Window):
         self.entry.set_icon_sensitive(Gtk.EntryIconPosition.SECONDARY, True)
         self.entry.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, "Search")
 
-        grid.attach(Gtk.Label(label="Substitutions:"), 0, 2, 1, 1)
+        grid.attach(Gtk.Label(label="Substitutions:"), 0, 3, 1, 1)
         self.subst_label = Gtk.Label()
-        grid.attach(self.subst_label, 1, 2, 1, 1)
+        grid.attach(self.subst_label, 0, 3, 1, 1)
 
         self.subst = Gtk.Entry()
         self.subst.set_placeholder_text("Enter substitutions")
-        grid.attach(self.subst, 1, 2, 1, 1)
+        grid.attach(self.subst, 1, 3, 1, 1)
 
         self.subst_label.set_tooltip_text("Substitutions made by the regex pattern")
         self.subst_label.set_sensitive(True)
@@ -66,16 +74,16 @@ class MyWindow(Gtk.Window):
         self.subst.set_icon_activatable(Gtk.EntryIconPosition.SECONDARY, True)
         self.subst.set_icon_sensitive(Gtk.EntryIconPosition.SECONDARY, True)
 
-        grid.attach(Gtk.Label(label="Matches:"), 0, 4, 1, 1)
-        self.matches_label = Gtk.Label()
-        grid.attach(self.matches_label, 1, 4, 1, 1)
-        self.matches_label.set_tooltip_text("Matches found by the regex pattern")
+        grid.attach(Gtk.Label(label="Result:"), 0, 4, 1, 1)
+        self.result_label = Gtk.Label()
+        grid.attach(self.result_label, 1, 4, 1, 1)
+        self.result_label.set_tooltip_text("Results found by the regex pattern")
 
-        self.matches = Gtk.Entry()
-        self.matches.set_sensitive(True)
-        self.matches.set_editable(False)
-        self.matches.set_can_focus(False)
-        grid.attach(self.matches, 1, 4, 1, 1)
+        self.result = Gtk.Entry()
+        self.result.set_sensitive(True)
+        self.result.set_editable(False)
+        self.result.set_can_focus(False)
+        grid.attach(self.result, 1, 4, 1, 1)
 
         self.eval_button = Gtk.Button(label="Evaluate")
         self.eval_button.set_tooltip_text("Evaluate the regex pattern against the text")
