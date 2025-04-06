@@ -22,6 +22,8 @@ class MyWindow(Gtk.Window):
         self.textview.set_tooltip_text("Enter text to match against the regex pattern")
         self.textview.set_sensitive(True)
         self.textview.set_size_request(500, 400)
+        self.textview.set_accepts_tab(False)
+        self.textview.set_cursor_visible(True)
         grid.attach(self.textview, 1, 0, 1, 1)
 
         self.combo = Gtk.ComboBoxText()
@@ -79,14 +81,15 @@ class MyWindow(Gtk.Window):
         grid.attach(self.result_label, 1, 4, 1, 1)
         self.result_label.set_tooltip_text("Results found by the regex pattern")
 
-        self.result = Gtk.Entry()
+        self.result = Gtk.TextView()
         self.result.set_sensitive(True)
         self.result.set_editable(False)
         self.result.set_can_focus(False)
+        self.result.set_wrap_mode(Gtk.WrapMode.WORD)
+        self.result.set_tooltip_text("Results found by the regex pattern")
+        self.result.set_size_request(500, 100)
         grid.attach(self.result, 1, 4, 1, 1)
 
-        self.eval_button = Gtk.Button(label="Evaluate")
-        self.eval_button.set_tooltip_text("Evaluate the regex pattern against the text")
-        grid.attach(self.eval_button, 1, 5, 1, 1)
-
-
+        # self.eval_button = Gtk.Button(label="Evaluate")
+        # self.eval_button.set_tooltip_text("Evaluate the regex pattern against the text")
+        # grid.attach(self.eval_button, 1, 5, 1, 1)
