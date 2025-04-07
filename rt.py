@@ -33,7 +33,15 @@ class DoIt:
         self.window.combo.connect("changed", self._on_combo_changed)
         textbuffer = self.window.textview.get_buffer()
         textbuffer.connect("changed", self._on_textview_changed)
+
     def _get_input_fields(self):
+        """Get the text from the pattern entry, substitution entry,
+        textview buffer and the selected function from the combo box.
+
+        :return: A tuple containing the pattern, substitution string,
+                 text from the textview buffer and the function name.
+        :rtype: tuple
+        """
         pattern = self.window.entry.get_text()
         repl = self.window.subst.get_text()
         buffer = self.window.textview.get_buffer()
@@ -41,6 +49,14 @@ class DoIt:
                                buffer.get_end_iter(), False)
         function = self.window.combo.get_active_text()
         return pattern, repl, text, function
+
+    def _all_together_now(self):
+        result = ''
+        self.window.result.get_buffer().set_text(result)
+        pattern, repl, text, function = self._get_input_fields()
+        result = self._evaluate_regex(function, pattern, text, repl)
+        self.window.result.get_buffer().set_text(str(result))
+
     def _on_textview_changed(self, _widget) -> None:
         """Clear the result text buffer when the text buffer content changes."""
         result_buffer = self.window.result.get_buffer()
@@ -55,29 +71,35 @@ class DoIt:
         :type widget: Gtk.Widget
         :return: None
         """
-        result = ''
-        self.window.result.get_buffer().set_text(result)
-        pattern, repl, text, function = self._get_input_fields()
-        result = None
-        result = self._evaluate_regex(function, pattern, text, repl)
-        self.window.result.get_buffer().set_text(str(result))
-    def _on_subst_changed(self, _widget):
-        result = ''
-        self.window.result.get_buffer().set_text(result)
-        pattern, repl, text, function = self._get_input_fields()
-        result = None
-        result = self._evaluate_regex(function, pattern, text, repl)
-        self.window.result.get_buffer().set_text(str(result))
+        self._all_together_now()
 
-    def _on_combo_changed(self, _widget):
-        result = ''
-        self.window.result.get_buffer().set_text(result)
-        pattern, repl, text, function = self._get_input_fields()
+    def _on_subst_changed(self, _widget):
+        """Called when the text in the substitution entry changes.
+
+        Evaluates the regex using the currently selected function and
+        displays the result in the result text buffer.
+
+        :param widget: The widget that triggered this signal. Unused.
+        :type widget: Gtk.Widget
+        :return: None
+        """
+        self._all_together_now()
+
+    def _on_combo_changed(self, combo):
+        """Called when the selected item in the combo box changes.
+
+        Enables or disables the substitution entry and label based on the
+        selected function. Then calls _all_together_now to re-evaluate the regex.
+
+        :param combo: The combo box widget that triggered this signal.
+        :type combo: Gtk.ComboBoxText
+        :return: None
+        """
+        function = combo.get_active_text()
         is_sub = function == "sub"
         self.window.subst.set_sensitive(is_sub)
         self.window.subst_label.set_sensitive(is_sub)
-        result = self._evaluate_regex(function, pattern, text, repl)
-        self.window.result.get_buffer().set_text(str(result))
+        self._all_together_now()
 
     def _evaluate_regex(self, function, pattern, text, repl=None):
         """Evaluate the regex function based on the selected option."""
