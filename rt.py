@@ -27,13 +27,20 @@ class DoIt:
 
     def _connect_signals(self):
         """Connect the signals."""
-        # self.window.eval_button.connect("clicked", self._evaluate_regex)
         self.window.entry.connect("changed", self._on_entry_changed)
         self.window.subst.connect("changed", self._on_subst_changed)
 
         self.window.combo.connect("changed", self._on_combo_changed)
         textbuffer = self.window.textview.get_buffer()
         textbuffer.connect("changed", self._on_textview_changed)
+    def _get_input_fields(self):
+        pattern = self.window.entry.get_text()
+        repl = self.window.subst.get_text()
+        buffer = self.window.textview.get_buffer()
+        text = buffer.get_text(buffer.get_start_iter(),
+                               buffer.get_end_iter(), False)
+        function = self.window.combo.get_active_text()
+        return pattern, repl, text, function
     def _on_textview_changed(self, _widget) -> None:
         """Clear the result text buffer when the text buffer content changes."""
         result_buffer = self.window.result.get_buffer()
@@ -50,38 +57,14 @@ class DoIt:
         """
         result = ''
         self.window.result.get_buffer().set_text(result)
-        pattern = self.window.entry.get_text()
-        repl = self.window.subst.get_text()
-        buffer = self.window.textview.get_buffer()
-        text = buffer.get_text(buffer.get_start_iter(),
-                                     buffer.get_end_iter(), False)
-        function = self.window.combo.get_active_text()
+        pattern, repl, text, function = self._get_input_fields()
         result = None
         result = self._evaluate_regex(function, pattern, text, repl)
         self.window.result.get_buffer().set_text(str(result))
-
-        self.buffer = self.window.textview.get_buffer()  # Use the pre-declared attribute
-        self.buffer = self.window.textview.get_buffer()
-        text = self.buffer.get_text(self.buffer.get_start_iter(),
-                                     self.buffer.get_end_iter(), False)
-        pattern = self.window.entry.get_text()
-        repl = self.window.subst.get_text()
-        function = self.window.combo.get_active_text()
-        result = self._evaluate_regex(function, pattern, text, repl)
-        print('pattern:', pattern)
-        print('repl:', repl)
-        print('result:', result)
-        self.window.result.get_buffer().set_text(str(result))
-
     def _on_subst_changed(self, _widget):
         result = ''
         self.window.result.get_buffer().set_text(result)
-        pattern = self.window.entry.get_text()
-        repl = self.window.subst.get_text()
-        buffer = self.window.textview.get_buffer()
-        text = buffer.get_text(buffer.get_start_iter(),
-                                     buffer.get_end_iter(), False)
-        function = self.window.combo.get_active_text()
+        pattern, repl, text, function = self._get_input_fields()
         result = None
         result = self._evaluate_regex(function, pattern, text, repl)
         self.window.result.get_buffer().set_text(str(result))
@@ -89,18 +72,10 @@ class DoIt:
     def _on_combo_changed(self, _widget):
         result = ''
         self.window.result.get_buffer().set_text(result)
-        pattern = self.window.entry.get_text()
-        repl = self.window.subst.get_text()
-        buffer = self.window.textview.get_buffer()
-        text = buffer.get_text(buffer.get_start_iter(),
-                                     buffer.get_end_iter(), False)
-        result = None
-        function = self.window.combo.get_active_text()
-        if function == "sub":
-            self.window.subst.set_sensitive(True)
-            self.window.subst_label.set_sensitive(True)
-        else:
-            self.window.subst.set_sensitive(False)
+        pattern, repl, text, function = self._get_input_fields()
+        is_sub = function == "sub"
+        self.window.subst.set_sensitive(is_sub)
+        self.window.subst_label.set_sensitive(is_sub)
         result = self._evaluate_regex(function, pattern, text, repl)
         self.window.result.get_buffer().set_text(str(result))
 

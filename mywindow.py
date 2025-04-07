@@ -41,7 +41,6 @@ class MyWindow(Gtk.Window):
         self.combo_label = Gtk.Label()
         grid.attach(self.combo_label, 1, 1, 1, 1)
 
-
         self.pattern_label = Gtk.Label(label="Pattern:")
         self.pattern_label.set_sensitive(True)
         self.pattern_label.set_tooltip_text("Regex pattern to match against the text")
@@ -50,7 +49,6 @@ class MyWindow(Gtk.Window):
         self.entry = Gtk.Entry()
         self.entry.set_sensitive(True)
         grid.attach(self.entry, 1, 2, 1, 1)
-
 
         self.entry.set_placeholder_text("Enter regex pattern")
         self.entry.set_tooltip_text("Enter a regex pattern to match against the text")
@@ -89,7 +87,3 @@ class MyWindow(Gtk.Window):
         self.result.set_tooltip_text("Results found by the regex pattern")
         self.result.set_size_request(500, 100)
         grid.attach(self.result, 1, 4, 1, 1)
-
-        # self.eval_button = Gtk.Button(label="Evaluate")
-        # self.eval_button.set_tooltip_text("Evaluate the regex pattern against the text")
-        # grid.attach(self.eval_button, 1, 5, 1, 1)
