@@ -27,7 +27,7 @@ class DoIt:
 
     def _connect_signals(self):
         """Connect the signals."""
-        self.window.entry.connect("changed", self._on_entry_changed)
+        self.window.pattern.connect("changed", self._on_entry_changed)
         self.window.subst.connect("changed", self._on_subst_changed)
 
         self.window.combo.connect("changed", self._on_combo_changed)
@@ -42,7 +42,7 @@ class DoIt:
                  text from the textview buffer and the function name.
         :rtype: tuple
         """
-        pattern = self.window.entry.get_text()
+        pattern = self.window.pattern.get_text()
         repl = self.window.subst.get_text()
         buffer = self.window.textview.get_buffer()
         text = buffer.get_text(buffer.get_start_iter(),
@@ -74,7 +74,7 @@ class DoIt:
         self._all_together_now()
 
     def _on_subst_changed(self, _widget):
-        """Called when the text in the substitution entry changes.
+        """Called when the text in the substitution pattern changes.
 
         Evaluates the regex using the currently selected function and
         displays the result in the result text buffer.
