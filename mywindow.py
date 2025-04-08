@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import os
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+gi.require_version('GtkSource', '3.0')
+import re
+from gi.repository import Gtk, GtkSource
 
 class MyWindow(Gtk.Window):
     def __init__(self):
@@ -46,18 +49,31 @@ class MyWindow(Gtk.Window):
         self.pattern_label.set_tooltip_text("Regex pattern to match against the text")
         grid.attach(self.pattern_label, 0, 2, 1, 1)
 
-        self.pattern = Gtk.Entry()
+        lang_path = r"C:\msys64\mingw64\share\gtksourceview-3.0\language-specs"
+        lang_path = os.path.abspath(lang_path)  # Ensure it resolves cleanly
+
+        lm = GtkSource.LanguageManager()
+        lm.set_search_path([lang_path])
+
+
+        buffer = GtkSource.Buffer()
+        buffer.set_language(lm.get_language('python')) #lm.get_language('python')
+        GtkSource.StyleSchemeManager().get_scheme('classic')
+        buffer.set_style_scheme(GtkSource.StyleSchemeManager().get_scheme('classic'))
+
+        buffer.set_highlight_syntax(True)
+        buffer.set_highlight_syntax(True)
+        buffer.set_highlight_matching_brackets(True)
+
+        self.pattern = GtkSource.View.new_with_buffer(buffer)
         self.pattern.set_sensitive(True)
         grid.attach(self.pattern, 1, 2, 1, 1)
 
-        self.pattern.set_placeholder_text("Enter regex pattern")
         self.pattern.set_tooltip_text("Enter a regex pattern to match against the text")
         self.pattern.set_sensitive(True)
-        self.pattern.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "edit-find-symbolic")
-        self.pattern.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, "Search")
-        self.pattern.set_icon_activatable(Gtk.EntryIconPosition.SECONDARY, True)
-        self.pattern.set_icon_sensitive(Gtk.EntryIconPosition.SECONDARY, True)
-        self.pattern.set_icon_tooltip_text(Gtk.EntryIconPosition.SECONDARY, "Search")
+        self.pattern.set_size_request(500, 100)
+        self.pattern.set_accepts_tab(False)
+        self.pattern.set_cursor_visible(True)
 
         grid.attach(Gtk.Label(label="Substitutions:"), 0, 3, 1, 1)
         self.subst_label = Gtk.Label()

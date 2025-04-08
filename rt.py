@@ -1,7 +1,8 @@
 import re
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+gi.require_version('GtkSource', '3.0')
+from gi.repository import Gtk, GtkSource
 from mywindow import MyWindow
 
 
@@ -27,7 +28,8 @@ class DoIt:
 
     def _connect_signals(self):
         """Connect the signals."""
-        self.window.pattern.connect("changed", self._on_entry_changed)
+        pattern_buffer = self.window.pattern.get_buffer()
+        pattern_buffer.connect("changed", self._on_entry_changed)
         self.window.subst.connect("changed", self._on_subst_changed)
 
         self.window.combo.connect("changed", self._on_combo_changed)
@@ -42,7 +44,10 @@ class DoIt:
                  text from the textview buffer and the function name.
         :rtype: tuple
         """
-        pattern = self.window.pattern.get_text()
+        pattern_buffer = self.window.pattern.get_buffer()
+        pattern = pattern_buffer.get_text(pattern_buffer.get_start_iter(),
+                                        pattern_buffer.get_end_iter(), False)
+        # pattern = self.window.pattern.get_buffer().get_text()
         repl = self.window.subst.get_text()
         buffer = self.window.textview.get_buffer()
         text = buffer.get_text(buffer.get_start_iter(),
@@ -54,6 +59,11 @@ class DoIt:
         result = ''
         self.window.result.get_buffer().set_text(result)
         pattern, repl, text, function = self._get_input_fields()
+        print('result', result)
+        print('pattern', pattern)
+        print('repl', repl)
+        print('text', text)
+        print('function', function)
         result = self._evaluate_regex(function, pattern, text, repl)
         self.window.result.get_buffer().set_text(str(result))
 
@@ -113,18 +123,17 @@ class DoIt:
         elif function == "findall":
             result = re.findall(pattern, text)
         elif function == "sub":
-            try:
-                repl = re.compile(repl)
-            except re.error as e:
-                print(e)
-                return f"Regex error: {e}"
             if repl is None:
                 return "No replacement pattern provided."
             if not isinstance(repl, str):
                 repl = repl.pattern
             if not isinstance(text, str):
                 text = str(text)
-            result = re.sub(pattern, repl, text)
+            try:
+                result = re.sub(pattern, repl, text)
+            except re.error as e:
+                print(e, 'yyy')
+                return f"Regex error: {e}"
         elif function == "split":
             result = re.split(pattern, text)
         elif function == "fullmatch":
