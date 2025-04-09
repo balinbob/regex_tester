@@ -1,3 +1,5 @@
+import os
+os.environ['GTK_DATA_PREFIX'] = 'C:\\msys64\\mingw64'
 import re
 import gi
 gi.require_version('Gtk', '3.0')

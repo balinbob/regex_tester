@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+os.environ['GTK_DATA_PREFIX'] = 'C:\\msys64\\mingw64'
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GtkSource', '3.0')
@@ -57,7 +58,7 @@ class MyWindow(Gtk.Window):
 
 
         buffer = GtkSource.Buffer()
-        buffer.set_language(lm.get_language('python')) #lm.get_language('python')
+        buffer.set_language(lm.get_language('perl')) #lm.get_language('python')
         GtkSource.StyleSchemeManager().get_scheme('classic')
         buffer.set_style_scheme(GtkSource.StyleSchemeManager().get_scheme('classic'))
 
