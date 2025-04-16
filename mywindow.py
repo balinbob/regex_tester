@@ -7,7 +7,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('GtkSource', '3.0')
 import re
-from gi.repository import Gtk, GtkSource
+from gi.repository import Gtk, Gdk, GtkSource, Pango
 
 class MyWindow(Gtk.Window):
     def __init__(self):
@@ -58,7 +58,8 @@ class MyWindow(Gtk.Window):
 
 
         buffer = GtkSource.Buffer()
-        buffer.set_language(lm.get_language('perl')) #lm.get_language('python')
+        buffer.set_language(lm.get_language('regex')) #lm.get_language('python')
+        print('language', buffer.get_language())
         GtkSource.StyleSchemeManager().get_scheme('classic')
         buffer.set_style_scheme(GtkSource.StyleSchemeManager().get_scheme('classic'))
 
@@ -66,24 +67,46 @@ class MyWindow(Gtk.Window):
         buffer.set_highlight_syntax(True)
         buffer.set_highlight_matching_brackets(True)
 
+        overlay = Gtk.Overlay()
+        
+        copy_button = Gtk.Button()
+        icon = Gtk.Image.new_from_icon_name("edit-copy", Gtk.IconSize.BUTTON)
+        copy_button.add(icon)
+        copy_button.connect("clicked", self._on_copy_button_clicked)
+        copy_button.set_tooltip_text("Copy the regex pattern to clipboard")
+
+        overlay.add_overlay(copy_button)
+        overlay.set_overlay_pass_through(copy_button, False)
+
+        copy_button.set_halign(Gtk.Align.END)
+        copy_button.set_valign(Gtk.Align.START)
+        copy_button.set_margin_top(5)
+        copy_button.set_margin_end(5)
+        grid.attach(overlay, 1, 2, 1, 1)
+
         self.pattern = GtkSource.View.new_with_buffer(buffer)
         self.pattern.set_sensitive(True)
-        grid.attach(self.pattern, 1, 2, 1, 1)
 
+        self.pattern.modify_font(Pango.FontDescription("monospace 10 Bold"))
         self.pattern.set_tooltip_text("Enter a regex pattern to match against the text")
         self.pattern.set_sensitive(True)
         self.pattern.set_size_request(500, 100)
         self.pattern.set_accepts_tab(False)
         self.pattern.set_cursor_visible(True)
+        
+        overlay.add(self.pattern)
 
         grid.attach(Gtk.Label(label="Substitutions:"), 0, 3, 1, 1)
         self.subst_label = Gtk.Label()
         grid.attach(self.subst_label, 0, 3, 1, 1)
 
+
         self.subst = Gtk.Entry()
         self.subst.set_placeholder_text("Enter substitutions")
         grid.attach(self.subst, 1, 3, 1, 1)
 
+        
+        self.subst.modify_font(Pango.FontDescription("monospace 10 Bold"))
         self.subst_label.set_tooltip_text("Substitutions made by the regex pattern")
         self.subst_label.set_sensitive(True)
         self.subst.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "edit-find-symbolic")
@@ -104,3 +127,9 @@ class MyWindow(Gtk.Window):
         self.result.set_tooltip_text("Results found by the regex pattern")
         self.result.set_size_request(500, 100)
         grid.attach(self.result, 1, 4, 1, 1)
+
+    def _on_copy_button_clicked(self, button):
+        buffer = self.pattern.get_buffer()
+        text = buffer.get_text(buffer.get_start_iter(), buffer.get_end_iter(), False)
+        clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+        clipboard.set_text(text, -1)
