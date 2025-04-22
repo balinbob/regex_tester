@@ -14,8 +14,9 @@ class MyWindow(Gtk.Window):
         super().__init__(title="My Regex Tester")
         self.set_border_width(10)
         self.set_default_size(600, 900)
-
+        self.set_resizable(True)
         grid = Gtk.Grid()
+
         grid.set_column_spacing(10)
         grid.set_row_spacing(10)
         self.add(grid)
@@ -28,6 +29,8 @@ class MyWindow(Gtk.Window):
         self.textview.set_size_request(500, 400)
         self.textview.set_accepts_tab(False)
         self.textview.set_cursor_visible(True)
+        self.textview.set_hexpand(True)
+        self.textview.set_vexpand(True)
         grid.attach(self.textview, 1, 0, 1, 1)
 
         self.combo = Gtk.ComboBoxText()
@@ -68,6 +71,8 @@ class MyWindow(Gtk.Window):
         buffer.set_highlight_matching_brackets(True)
 
         overlay = Gtk.Overlay()
+        overlay.set_hexpand(True)
+        # overlay.set_vexpand(True)
         
         copy_button = Gtk.Button()
         icon = Gtk.Image.new_from_icon_name("edit-copy", Gtk.IconSize.BUTTON)
@@ -126,6 +131,8 @@ class MyWindow(Gtk.Window):
         self.result.set_wrap_mode(Gtk.WrapMode.WORD)
         self.result.set_tooltip_text("Results found by the regex pattern")
         self.result.set_size_request(500, 100)
+        self.result.set_hexpand(True)
+        self.result.set_vexpand(True)
         grid.attach(self.result, 1, 4, 1, 1)
 
     def _on_copy_button_clicked(self, button):

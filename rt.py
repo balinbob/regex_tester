@@ -134,7 +134,6 @@ class DoIt:
             try:
                 result = re.sub(pattern, repl, text)
             except re.error as e:
-                print(e, 'yyy')
                 return f"Regex error: {e}"
         elif function == "split":
             result = re.split(pattern, text)
